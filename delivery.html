@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin</title>
+
+    <!-- Material Cdn-->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <!-- Stylesheet-->
+    <link rel="stylesheet" href="./overall.css">
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
+
+    <style>
+
+
+      .table-container {
+        padding: 20px;
+        margin: 20px;
+        background-color: #f9f9f9;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        margin-top: 50px;
+      }
+
+      main h2 {
+        font-size: 25px;
+        color: #2c3e50;
+        border-bottom: 1px solid #c9c7c7;
+        padding-bottom: 10px;
+        margin-bottom: 30px;
+        margin-top: 60px;
+        margin-right: -350px;
+        margin-left: 20px;
+      }
+
+      .map-container h2{
+        color: #6f757c;
+        border-bottom: 1px solid #c9c7c7;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+        margin-top: 70px;
+      }
+
+      .map-controls{
+        display: flex;
+        justify-content: flex-end;
+      }
+
+      .filters {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 15px;
+        align-items: center;
+
+
+      }
+
+      #filter-collector {
+        color: black;
+        border: 1px solid #979797;
+        padding: 10px;
+        border-radius: 4px;
+        font-size: 13px;
+      }
+
+      #filter-location {
+        color: black;
+        border: 1px solid #979797;
+        padding: 10px;
+        border-radius: 4px;
+        font-size: 13px;
+        width: 215px;
+      }
+
+      #filter-destination {
+        color: black;
+        border: 1px solid #979797;
+        padding: 10px;
+        border-radius: 4px;
+        font-size: 13px;
+        width: 135px;
+      }
+
+      #filter-date{
+        padding: 10px;
+        border-radius: 6px;
+        border: 1px solid #c9c7c7;
+      }
+
+      #filter-status {
+        color: black;
+        border: 1px solid #979797;
+        padding: 10px;
+        border-radius: 4px;
+        font-size: 13px;
+        width: 145px;
+      }
+
+      #clear-filters{
+        box-shadow: 4px 4px 6px rgba(0, 0, 0, 0.2);
+        transition: 0.2s ease-in-out;
+      }
+
+      .filters input,
+      .filters select {
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+
+      .filters select {
+        appearance: none; /* Remove default arrow */
+        -webkit-appearance: none;
+        -moz-appearance: none;
+
+        background-color: #fff;
+        background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='gray' class='bi bi-caret-down-fill' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14l-4.796-5.481C1.885 5.239 2.563 4 3.705 4h8.59c1.142 0 1.82 1.239 1.254 1.659l-4.796 5.481a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 10px center;
+        background-size: 16px 16px;
+
+        padding: 8px 35px 8px 12px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 14px;
+        cursor: pointer;
+      }
+
+
+      .filters button {
+        padding: 8px 12px;
+        background-color: #8b8d8f;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      .filters button:hover {
+        background-color: #797a7b;
+      }
+
+
+
+      .table-wrapper{
+        max-height: 550px;
+        overflow-y: auto;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed;
+      }
+
+      th:nth-child(1), td:nth-child(1) {
+        width: 15%;
+      }
+
+      th:nth-child(2), td:nth-child(2) {
+        width: 20%;
+      }
+
+      th:nth-child(3), td:nth-child(3) {
+        width: 20%;
+      }
+
+      th:nth-child(4), td:nth-child(4) {
+        width: 12%;
+      }
+
+      th:nth-child(5), td:nth-child(5) {
+        width: 25%;
+      }
+
+      thead, tbody{
+        display: block;
+      }
+
+      tbody{
+        max-height: 500px;
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
+
+      thead tr, tbody tr {
+        display: table;
+        table-layout: fixed;
+        width: 100%;
+      }
+
+      th, td {
+        padding: 10px;
+        text-align: center;
+        border-bottom: 1px solid #ddd;
+      }
+
+      th {
+        background-color: #d2d3d3;
+        color: black;
+        font-weight: bold;
+        font-size: 13px;
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        position: sticky;
+      }
+
+      tr:hover {
+        background-color: #f1f1f1;
+      }
+
+      .status-badge {
+        font-size: 13px;
+        font-weight: bold;
+        display: inline-block;
+        min-width: 100px;
+        color: rgb(0, 0, 0);
+        text-transform: capitalize;
+      }
+
+      .status-completed {
+        color: #28a745; /* Green */
+      }
+
+      .status-progress {
+        color: #fd7e14; /* Orange */
+      }
+
+      .status-pending {
+        color: #dc3545; /* Red */
+      }
+
+
+      #refresh-map {
+        background-color: #266824;
+        padding: 10px;
+        border-radius: 6px;
+        color: white;
+        align-items: right;
+      }
+
+      #refresh-map:hover {
+        background-color: #218838;
+      }
+
+      #map {
+        width: 100%;
+        height: 300px; 
+        margin-top: 20px;
+        border-radius: 8px;
+        border: 1px solid rgb(108, 108, 108);
+      }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <aside>
+            <div class="top">
+                <div class="logo">
+                    <img src="./images/logo.JPG" alt="">
+                    <h2>PO<span class="dGreen">YO</span></h2>
+                </div>
+                <div class="close" id="close-btn">
+                    <span class="material-symbols-outlined">close</span>
+                </div>
+            </div>
+
+            <div class="sidebar" id="clicked">
+                <a href="index.html" class="" id="dashboard">
+                    <span class="material-symbols-outlined">dashboard</span>
+                    <h3>Dashboard</h3>
+                </a>
+                <a href="user_management.html">
+                  <span class="material-symbols-outlined">manage_accounts</span>
+                  <h3>User Management</h3>
+                </a>
+                <a href="feedback.html">
+                  <span class="material-symbols-outlined">feedback</span>
+                  <h3>Feedback</h3>
+                </a>
+                <a href="chat_support.html" id="feedback-support" class="">
+                  <span class="material-symbols-outlined">support_agent</span>
+                  <h3>Customer Support</h3>
+                </a>
+                <a href="notify.html" class="" id="messages">
+                    <span class="material-symbols-outlined">notifications</span>
+                    <h3>Notifications</h3>
+                </a>
+                <a href="delivery.html" class="active" id="settings">
+                    <span class="material-symbols-outlined">local_shipping</span>
+                    <h3>Delivery</h3>
+                </a>
+                <a href="#" class="" id="">
+                    <span class="material-symbols-outlined">logout</span>
+                    <h3>Logout</h3>
+                </a>
+            </div>
+        </aside>
+
+        <main>
+          <h2>Deliveries Information</h2>
+          <div class="table-container">
+            
+            <div class="filters">
+              <input type="text" id="filter-collector" placeholder="Search collector...">
+            
+              <select id="filter-location">
+                <option value="">All Locations</option>
+              </select>
+            
+              <select id="filter-destination">
+                <option value="">All Destinations</option>
+              </select>
+            
+              <input type="date" id="filter-date">
+            
+              <select id="filter-status">
+                <option value="">All Status</option>
+              </select>
+              <button id="clear-filters">Clear Filters</button>
+            </div>
+            
+            <div class="table-wrapper">
+                <table id="deliveries-table">
+                    <thead>
+                        <tr>
+                            <th>Collector</th>
+                            <th>Location</th>
+                            <th>Destination</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body">
+                        <!-- Data will be dynamically added here -->
+                    </tbody>
+                </table>
+            </div>
+          </div>
+        </main>
+
+        <div class="right">
+            <div class="top">
+                <button id="menu-btn">
+                    <span class="material-symbols-outlined">menu</span>
+                </button>
+                <div class="theme-toggler">
+                    <span class="material-symbols-outlined active">light_mode</span>
+                    <span class="material-symbols-outlined">dark_mode</span>
+                </div>
+                <div class="profile">
+                    <div class="info">
+                      <p>Hey,</p>
+                      <b style="text-align: center;">Admin</b>
+                    </div>
+                    <div class="profile-photo">
+                        <img src="./images/admin.webp" alt="" class="pic">
+                    </div>
+                </div>
+            </div>
+
+            <div class="map-container">
+              <h2>Map</h2>
+                <div class="map-controls">
+                  <button id="refresh-map">
+                    <span class="material-symbols-outlined" style="vertical-align: middle;">refresh</span>
+                    Refresh Map
+                  </button>
+                </div>
+              <div id="map"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="./dashboard.js"></script>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.min.js"></script>
+
+    <script type="module">
+      import { db } from './firebase-config.js';
+      import { doc, getDoc, getDocs, collection } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+
+      let deliveriesData = [];
+
+      let routingControl = null;
+
+
+      async function fetchDeliveries() {
+        try {
+          const querySnapshot = await getDocs(collection(db, "deliveries"));
+          deliveriesData = [];
+
+          querySnapshot.forEach(doc => {
+            const data = doc.data();
+            deliveriesData.push({
+              collector: data.collector || "Unknown",
+              location: data.location || "Unknown",
+              destination: data.destination || "Unknown",
+              preferredDate: data.preferredDate || null,
+              preferredTime: data.preferredTime || null,
+              status: data.status || "Unknown"
+            });
+          });
+
+          populateFilters();
+          renderTable(deliveriesData);
+        } catch (error) {
+          console.error("Error fetching deliveries data: ", error);
+        }
+      }
+
+      // Call the function to populate the table on page load
+      fetchDeliveries();
+
+      function renderTable(data) {
+        const tableBody = document.getElementById('table-body');
+        tableBody.innerHTML = ""; // Clear table
+
+        data.forEach(item => {
+          const dateTimeStr = item.preferredDate && item.preferredTime 
+            ? `${item.preferredDate} ${item.preferredTime}` 
+            : "Unknown";
+
+          // Determine class based on status
+          let statusClass = "";
+          const status = item.status.toLowerCase();
+          if (status === "completed" || status === "delivered") statusClass = "status-completed";
+          else if (status === "on delivery" || status === "picking up" || status === "delivering") statusClass = "status-progress";
+          else if (status === "waiting for pickup") statusClass = "status-pending";
+
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${item.collector}</td>
+            <td>${item.location}</td>
+            <td>${item.destination}</td>
+            <td>${dateTimeStr}</td>
+            <td><span class="status-badge ${statusClass}">${item.status}</span></td>
+          `;
+          tableBody.appendChild(row);
+        });
+      }
+
+
+      function populateFilters() {
+        const locationSelect = document.getElementById("filter-location");
+        const destinationSelect = document.getElementById("filter-destination");
+        const statusSelect = document.getElementById("filter-status");
+
+        // Clear old options (except the first "All ..." option)
+        locationSelect.length = 1;
+        destinationSelect.length = 1;
+        statusSelect.length = 1;
+
+        const uniqueLocations = [...new Set(deliveriesData.map(item => item.location))];
+        const uniqueDestinations = [...new Set(deliveriesData.map(item => item.destination))];
+        const uniqueStatuses = [...new Set(deliveriesData.map(item => item.status))];
+
+        uniqueLocations.forEach(loc => {
+          const option = document.createElement('option');
+          option.value = option.textContent = loc;
+          locationSelect.appendChild(option);
+        });
+
+        uniqueDestinations.forEach(dest => {
+          const option = document.createElement('option');
+          option.value = option.textContent = dest;
+          destinationSelect.appendChild(option);
+        });
+
+        uniqueStatuses.forEach(status => {
+          const option = document.createElement('option');
+          option.value = option.textContent = status;
+          statusSelect.appendChild(option);
+        });
+      }
+
+
+      document.querySelectorAll('#filter-collector, #filter-location, #filter-destination, #filter-date, #filter-status')
+      .forEach(input => input.addEventListener('input', applyFilters));
+
+      function applyFilters() {
+        const collectorVal = document.getElementById('filter-collector').value.toLowerCase();
+        const locationVal = document.getElementById('filter-location').value;
+        const destinationVal = document.getElementById('filter-destination').value;
+        const dateVal = document.getElementById('filter-date').value;
+        const statusVal = document.getElementById('filter-status').value;
+
+        const filtered = deliveriesData.filter(item => {
+          const matchCollector = item.collector.toLowerCase().includes(collectorVal);
+          const matchLocation = !locationVal || item.location === locationVal;
+          const matchDestination = !destinationVal || item.destination === destinationVal;
+          const matchStatus = !statusVal || item.status === statusVal;
+
+          let matchDate = true;
+          if (dateVal && item.preferredDate) {
+            matchDate = item.preferredDate === dateVal;
+          }
+          return matchCollector && matchLocation && matchDestination && matchStatus && matchDate;
+        });
+
+        renderTable(filtered);
+      }
+
+      document.getElementById('clear-filters').addEventListener('click', () => {
+        document.getElementById('filter-collector').value = "";
+        document.getElementById('filter-location').value = "";
+        document.getElementById('filter-destination').value = "";
+        document.getElementById('filter-date').value = "";
+        document.getElementById('filter-status').value = "";
+
+        renderTable(deliveriesData);
+      });
+
+      document.getElementById('refresh-map').addEventListener('click', () => {
+        map.eachLayer(layer => {
+          if (layer instanceof L.Marker || layer instanceof L.Polyline) {
+            map.removeLayer(layer);
+          }
+        });
+
+        // Remove routing control if exists
+        if (routingControl) {
+          map.removeControl(routingControl);
+          routingControl = null;
+        }
+
+        // Re-add base layer (OpenStreetMap tiles)
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        // Reload map data
+        displayMap();
+      });
+
+
+
+
+      const map = L.map('map').setView([3.1475, 101.5754], 12);
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(map);
+
+      async function displayMap() {
+        try {
+          const bounds = [];
+
+          // Load all location markers
+          const locationDocs = await getDocs(collection(db, "locations"));
+          const locations = {};
+
+          locationDocs.forEach(docSnap => {
+            const data = docSnap.data();
+            const latLng = L.latLng(data.coords[0], data.coords[1]);
+            locations[data.name] = latLng;
+
+            L.marker(latLng)
+              .addTo(map)
+              .bindTooltip(data.name, { permanent: true });
+
+            bounds.push(latLng);  // Push every location marker to bounds
+          });
+
+          // Load Current (Collector)
+          const currentSnap = await getDoc(doc(db, "Markers", "Current"));
+          if (currentSnap.exists()) {
+            const currentData = currentSnap.data();
+            const [lat, lng] = currentData.location;
+            const collectorID = currentData.collector || "Unknown ID";
+            const timestamp = currentData.timestamp?.toDate() || new Date();
+
+            // Format date + time
+            const options = { 
+              day: '2-digit', month: '2-digit', year: 'numeric', 
+              hour: '2-digit', minute: '2-digit', hour12: true 
+            };
+            const formattedDateTime = timestamp.toLocaleString('en-US', options).replace(',', '');
+
+            const collectorLatLng = L.latLng(lat, lng);
+            bounds.push(collectorLatLng);  // Add collector position to bounds
+
+            L.marker(collectorLatLng, {
+              icon: L.divIcon({
+                className: 'custom-collector-marker',
+                html: `<div style="color:#fff; background:#0078ff; padding:2px 4px; border-radius:4px; font-size:10px; width:120px">
+                        <strong>Collector:</strong> ${collectorID}<br>
+                        <strong>DateTime:</strong> ${formattedDateTime}
+                      </div>`,
+                iconSize: [180, 55],
+                iconAnchor: [90, 28]
+              })
+            }).addTo(map);
+
+            // Load Destination
+            const destinationSnap = await getDoc(doc(db, "Markers", "Destination"));
+            if (destinationSnap.exists()) {
+              const markerName = destinationSnap.data()["Current Marker"];
+              const destination = locations[markerName];
+
+              if (destination) {
+                // Draw the route without directions box
+                if (routingControl) {
+                  map.removeControl(routingControl); // Remove old route if exists
+                }
+
+                routingControl = L.Routing.control({
+                  waypoints: [collectorLatLng, destination],
+                  createMarker: () => null,
+                  lineOptions: {
+                    styles: [{ color: '#0078ff', weight: 6 }]
+                  },
+                  addWaypoints: false,
+                  routeWhileDragging: false,
+                  fitSelectedRoutes: false,
+                  show: false
+                }).addTo(map);
+              }
+            }
+          }
+
+          // After all markers and route, adjust map to fit all markers
+          if (bounds.length > 0) {
+            map.fitBounds(bounds, { padding: [30, 30], maxZoom: 12 });  // Limit zoom level to 12
+          }
+
+        } catch (error) {
+          console.error("Error loading data:", error);
+          alert("Failed to load map data.");
+        }
+      }
+
+      displayMap();
+    </script>
+</body>
+</html>

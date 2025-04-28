@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POYO Admin Dashboard</title>
+
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="./overall.css">
+    <link rel="stylesheet" href="./user_management.css">
+
+    <style>
+        body.dark-theme-variables{
+            background: #181a1e;
+
+            .card{
+                background: black;
+            }
+
+            .card-large-card{
+                background: black;
+            }
+
+            .material-symbols-outlined{
+                color: grey;
+            }
+
+            .card-value{
+                color: #fff;
+            }
+
+            .recent-messages{
+                background: black;
+            }
+
+            .action-item span{
+                font-weight: bold;
+                color: whitesmoke;
+            }
+
+            .action-item:hover{
+                background: rgb(55, 55, 55);
+            }
+
+            .pic{
+                background-color: rgb(92, 92, 92);
+            }
+        }
+
+        body { 
+
+            background-color: #f5f7fa;
+        }
+
+        h1{
+            margin-top: 60px;
+            margin-left: 20px;
+        }
+        
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s;
+            height: 200px;
+        }
+
+        .card-large-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #4a5568;
+        }
+
+        .card-title-large {
+            font-size: 18px;
+            font-weight: 600;
+            color: #4a5568;
+        }
+        
+        .card-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #2d3748;
+            margin: 10px 0;
+            text-align: center;
+        }
+        
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            color: #718096;
+        }
+
+        .trend{
+            font-weight: 500px;
+            color: #6b7280;
+        }
+        
+        .trend-up {
+            color: #38a169;
+        }
+        
+        .trend-down {
+            color: #e53e3e;
+        }
+
+        .card-value:empty::before{
+            content: "--";
+            color: #d1d5db;
+        }
+
+        #pendingUsers{
+            color: red;
+        }
+        
+        .card-large-card {
+            grid-column: span 3;
+            height: 400px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chart-container {
+            flex: 1;
+            min-height: 200px;
+            position: relative;
+            margin: 10px 0;
+        }
+
+        .chart-bar {
+            transition: all 0.3s ease;
+        }
+
+        .chart-bar:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        .loading-message, .error-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #718096;
+            font-style: italic;
+        }
+
+        .error-message {
+            color: #e53e3e;
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            padding: 15px 0 0;
+            border-top: 1px solid #edf2f7;
+        }
+
+        .chart-bar {
+        transition: all 0.3s ease;
+        }
+        
+        .chart-bar:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+        
+        .activity-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .activity-item {
+            padding: 12px 0;
+            border-bottom: 1px solid #edf2f7;
+            display: flex;
+            align-items: center;
+        }
+        
+        .activity-icon {
+            background: #ebf8ff;
+            color: #3182ce;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+        }
+        
+        .chart-container {
+            height: 250px;
+            margin-top: 20px;
+        }
+
+        .recent-messages {
+            margin-left: 30px;
+            padding: 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            margin-top: 60px;
+        }
+        
+        .recent-messages h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #edf2f7;
+        }
+        
+        .action-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .action-item:hover {
+            background-color: #f8f9fa;
+            transform: translateX(3px);
+        }
+        
+        .action-item .material-symbols-outlined {
+            font-size: 20px;
+            margin-right: 10px;
+            color: #4a5568;
+        }
+        
+        .action-item span:last-child {
+            font-size: 14px;
+            color: #2d3748;
+            font-weight: 500;
+        }
+        
+        /* If you want to add a subtle animation on hover */
+        .action-item:hover .material-symbols-outlined {
+            color: #266824;
+            transform: scale(1.1);
+            transition: all 0.2s ease;
+        }
+
+        .um-modal textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: inherit;
+            resize: vertical;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <aside>
+            <div class="top">
+                <div class="logo">
+                    <img src="./images/logo.JPG" alt="POYO Logo">
+                    <h2>PO<span class="dGreen">YO</span></h2>
+                </div>
+                <div class="close" id="close-btn">
+                    <span class="material-symbols-outlined">close</span>
+                </div>
+            </div>
+
+            <div class="sidebar" id="clicked">
+                <a href="dashboard.html" class="active" id="dashboard">
+                    <span class="material-symbols-outlined">dashboard</span>
+                    <h3>Dashboard</h3>
+                </a>
+                <a href="user_management.html">
+                    <span class="material-symbols-outlined">manage_accounts</span>
+                    <h3>User Management</h3>
+                </a>
+                <a href="feedback.html">
+                    <span class="material-symbols-outlined">feedback</span>
+                    <h3>Feedback</h3>
+                </a>
+                <a href="chat_support.html" id="feedback-support" class="">
+                    <span class="material-symbols-outlined">support_agent</span>
+                    <h3>Customer Support</h3>
+                </a>
+                <a href="notify.html" class="" id="messages">
+                    <span class="material-symbols-outlined">notifications</span>
+                    <h3>Notifications</h3>
+                </a>
+                <a href="delivery.html" class="" id="settings">
+                    <span class="material-symbols-outlined">local_shipping</span>
+                    <h3>Delivery</h3>
+                </a>
+                <a href="#" class="" id="">
+                    <span class="material-symbols-outlined">logout</span>
+                    <h3>Logout</h3>
+                </a>
+            </div>
+        </aside>
+
+        <!---------------------- MAIN CONTENT ---------------------->
+        <main>
+            <h1>Dashboard Overview</h1>
+            
+            
+            <div class="dashboard-grid">
+                <!-- Card 1: Total Deliveries -->
+                <div class="card">
+                    <div class="card-header">
+                        <span class="material-symbols-outlined">local_shipping</span>
+                        <span class="card-title">Total Deliveries</span>
+                    </div>
+                    <div class="card-value" id="totalDeliveries">--</div>
+                    <div class="card-footer">
+                        <span id="todayDeliveries">Today: --</span>
+                        <span class="trend" id="deliveryTrend">--</span>
+                    </div>
+                </div>
+                
+                <script type="module">
+                    import { db } from './firebase-config.js';
+                    import { 
+                        collection, 
+                        getDocs, 
+                        query, 
+                        where,
+                        getCountFromServer
+                    } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+                
+                    // Helper function to get YYYY-MM-DD date string
+                    const formatDate = (date) => date.toISOString().split('T')[0];
+                
+                    // Calculate dates
+                    const today = new Date();
+                    const yesterday = new Date(today);
+                    yesterday.setDate(yesterday.getDate() - 1);
+                    
+                    const todayStr = formatDate(today);
+                    const yesterdayStr = formatDate(yesterday);
+                
+                    async function getDeliveryStats() {
+                        try {
+                            const deliveriesRef = collection(db, "deliveries");
+                            
+                            // Get total count (optimized with count query)
+                            const totalSnapshot = await getCountFromServer(deliveriesRef);
+                            const totalCount = totalSnapshot.data().count;
+                            document.getElementById('totalDeliveries').textContent = totalCount;
+                            
+                            // Get today's count
+                            const todayQuery = query(deliveriesRef, 
+                                where("preferredDate", "==", todayStr));
+                            const todayCountSnapshot = await getCountFromServer(todayQuery);
+                            const todayCount = todayCountSnapshot.data().count;
+                            document.getElementById('todayDeliveries').textContent = `Today: ${todayCount}`;
+                            
+                            // Get yesterday's count
+                            const yesterdayQuery = query(deliveriesRef, 
+                                where("preferredDate", "==", yesterdayStr));
+                            const yesterdayCountSnapshot = await getCountFromServer(yesterdayQuery);
+                            const yesterdayCount = yesterdayCountSnapshot.data().count;
+                            
+                            // Calculate trend
+                            const trendElement = document.getElementById('deliveryTrend');
+                            
+                            if (yesterdayCount === 0) {
+                                trendElement.textContent = "No deliveries yesterday";
+                                trendElement.className = "trend";
+                            } else {
+                                const percentageChange = ((todayCount - yesterdayCount) / yesterdayCount) * 100;
+                                const roundedChange = Math.round(Math.abs(percentageChange));
+                                
+                                if (percentageChange > 0) {
+                                    trendElement.innerHTML = `↑ ${roundedChange}% from yesterday`;
+                                    trendElement.className = "trend trend-up";
+                                } else if (percentageChange < 0) {
+                                    trendElement.innerHTML = `↓ ${roundedChange}% from yesterday`;
+                                    trendElement.className = "trend trend-down";
+                                } else {
+                                    trendElement.textContent = "No change from yesterday";
+                                    trendElement.className = "trend";
+                                }
+                            }
+                            
+                        } catch (error) {
+                            console.error("Error fetching delivery data:", error);
+                            document.getElementById('totalDeliveries').textContent = "Error";
+                            document.getElementById('todayDeliveries').textContent = "Today: Error";
+                            document.getElementById('deliveryTrend').textContent = "Data unavailable";
+                            document.getElementById('deliveryTrend').className = "trend";
+                        }
+                    }
+                
+                    // Initialize when dashboard loads
+                    document.addEventListener('DOMContentLoaded', getDeliveryStats);
+                    
+                    // Optional: Refresh data every 5 minutes
+                    setInterval(getDeliveryStats, 300000);
+                </script>
+                
+                
+                <!-- Card 2: Active Users -->
+                <div class="card">
+                    <div class="card-header">
+                      <span class="material-symbols-outlined">group</span>
+                      <span class="card-title">Total Users</span>
+                    </div>
+                    <div class="card-value" id="totalUsers">--</div>
+                    <div class="card-footer">
+                      <span id="pendingUsers">Pending: --</span>
+                    </div>
+                  </div>
+                  
+                  <script type="module">
+                    import { db } from './firebase-config.js';
+                    import { 
+                      collection, 
+                      getDocs, 
+                      query, 
+                      where,
+                      getCountFromServer
+                    } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+                  
+                    async function getUserStats() {
+                      try {
+                        const usersRef = collection(db, "users");
+                        
+                        // Get total user count (optimized)
+                        const totalCountSnapshot = await getCountFromServer(usersRef);
+                        const totalCount = totalCountSnapshot.data().count;
+                        document.getElementById('totalUsers').textContent = totalCount;
+                  
+                        // Get pending users count (assuming 'approved' boolean field)
+                        const pendingQuery = query(usersRef, where("status", "==", "Pending"));
+                        const pendingCountSnapshot = await getCountFromServer(pendingQuery);
+                        const pendingCount = pendingCountSnapshot.data().count;
+                        document.getElementById('pendingUsers').textContent = `Pending: ${pendingCount}`;
+                  
+                      } catch (error) {
+                        console.error("Error fetching user data:", error);
+                        document.getElementById('totalUsers').textContent = 'Error';
+                        document.getElementById('pendingUsers').textContent = 'Pending: Error';
+                      }
+                    }
+                  
+                    document.addEventListener('DOMContentLoaded', getUserStats);
+                  </script>
+                
+                <!-- Card 3: Pending Feedback -->
+                <div class="card">
+                    <div class="card-header">
+                      <span class="material-symbols-outlined">feedback</span>
+                      <span class="card-title">Total Feedback</span>
+                    </div>
+                    <div class="card-value" id="totalFeedback">--</div>
+                    <div class="card-footer">
+                      <span id="todayFeedback">Today: --</span>
+                    </div>
+                </div>
+                
+                <script type="module">
+                import { db } from './firebase-config.js';
+                import { 
+                    collection, 
+                    query, 
+                    where,
+                    getCountFromServer
+                } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+                
+                // Format date as YYYY-MM-DD
+                const formatDate2 = (date) => date.toISOString().split('T')[0];
+                
+                async function getFeedbackStats() {
+                    try {
+                    const feedbackRef = collection(db, "staff_feedback");
+                    const today = new Date();
+                    const todayStr = formatDate2(today);
+                
+                    // Get total feedback count
+                    const totalCountSnapshot = await getCountFromServer(feedbackRef);
+                    document.getElementById('totalFeedback').textContent = totalCountSnapshot.data().count;
+                
+                    // Get today's feedback count
+                    const todayQuery = query(
+                        feedbackRef, 
+                        where("submittedAt", ">=", new Date(todayStr)),
+                        where("submittedAt", "<", new Date(today.getTime() + 86400000)) // Next day
+                    );
+                    const todayCountSnapshot = await getCountFromServer(todayQuery);
+                    document.getElementById('todayFeedback').textContent = `Today: ${todayCountSnapshot.data().count}`;
+                
+                    } catch (error) {
+                    console.error("Error fetching feedback data:", error);
+                    document.getElementById('totalFeedback').textContent = 'Error';
+                    document.getElementById('todayFeedback').textContent = 'Today: Error';
+                    }
+                }
+                
+                document.addEventListener('DOMContentLoaded', getFeedbackStats);
+                </script>
+                
+                <!-- Card 4: Delivery Status (Large Card) -->
+                <div class="card-large-card">
+                    <div class="card-header">
+                        <span class="material-symbols-outlined">donut_large</span>
+                        <span class="card-title-large">Delivery Status</span>
+                    </div>
+                    <div class="chart-container" id="deliveryChart">
+                        <div class="loading-message">Loading delivery data...</div>
+                    </div>
+                    <div class="card-footer" id="deliveryLegend"></div>
+                </div>
+
+                <script type="module">
+                    import { db } from './firebase-config.js';
+                    import { collection, getDocs } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+
+                    // Status configuration
+                    const statusMapping = {
+                        'completed': 'completed',
+                        'delivered': 'completed', // maps to 'completed'
+                        'on delivery': 'in-progress',
+                        'picking up': 'in-progress', // maps to 'in-progress'
+                        'failed': 'failed',
+                        'waiting for pickup': 'pending'
+                    };
+
+                    const statusConfig = {
+                        'completed': { color: '#48bb78', label: 'Completed' },
+                        'in-progress': { color: '#ed8936', label: 'In Progress' },
+                        'failed': { color: '#e53e3e', label: 'Failed' },
+                        'pending': { color: '#a0aec0', label: 'Pending' }
+                    };
+
+                    async function loadDeliveryStatus() {
+                        try {
+                            const deliveriesRef = collection(db, "deliveries");
+                            const snapshot = await getDocs(deliveriesRef);
+                            
+                            // Count deliveries by status
+                            const statusCounts = {};
+                            let totalDeliveries = 0;
+                            
+                            snapshot.forEach(doc => {
+                                let status = doc.data().status?.toLowerCase() || 'unknown';
+                                // Normalize status using our mapping
+                                status = statusMapping[status] || status;
+                                statusCounts[status] = (statusCounts[status] || 0) + 1;
+                                totalDeliveries++;
+                            });
+                            
+                            // Prepare chart data using only the statuses we've configured
+                            const chartData = [];
+                            for (const [status, config] of Object.entries(statusConfig)) {
+                                const count = statusCounts[status] || 0;
+                                const percentage = totalDeliveries > 0 ? Math.round((count / totalDeliveries) * 100) : 0;
+                                chartData.push({ ...config, count, percentage });
+                            }
+                            
+                            renderDeliveryChart(chartData);
+                            
+                        } catch (error) {
+                            console.error("Error loading delivery status:", error);
+                            document.getElementById('deliveryChart').innerHTML = 
+                                '<div class="error-message">Failed to load delivery data</div>';
+                        }
+                    }
+
+                    function renderDeliveryChart(data) {
+                        const chartContainer = document.getElementById('deliveryChart');
+                        const legendContainer = document.getElementById('deliveryLegend');
+                        
+                        // Clear existing content
+                        chartContainer.innerHTML = '';
+                        legendContainer.innerHTML = '';
+                        
+                        // Create chart bars container
+                        const barsContainer = document.createElement('div');
+                        barsContainer.style.display = 'flex';
+                        barsContainer.style.height = '100%';
+                        barsContainer.style.alignItems = 'flex-end';
+                        barsContainer.style.justifyContent = 'space-around';
+                        barsContainer.style.gap = '10px';
+                        barsContainer.style.padding = '0 20px';
+                        
+                        // Create bars
+                        data.forEach(item => {
+                            const barWrapper = document.createElement('div');
+                            barWrapper.style.display = 'flex';
+                            barWrapper.style.flexDirection = 'column';
+                            barWrapper.style.alignItems = 'center';
+                            barWrapper.style.justifyContent = 'flex-end';
+                            barWrapper.style.height = '100%';
+                            barWrapper.style.width = '100%';
+                            
+                            const bar = document.createElement('div');
+                            bar.className = 'chart-bar';
+                            bar.style.backgroundColor = item.color;
+                            bar.style.width = '80%';
+                            bar.style.height = `${item.percentage}%`;
+                            bar.style.minHeight = '2px';
+                            bar.style.borderRadius = '4px 4px 0 0';
+                            bar.style.transition = 'height 0.5s ease';
+                            bar.style.position = 'relative';
+                            
+                            // Tooltip
+                            const tooltip = document.createElement('div');
+                            tooltip.className = 'chart-tooltip';
+                            tooltip.textContent = `${item.count} deliveries`;
+                            tooltip.style.position = 'absolute';
+                            tooltip.style.bottom = '100%';
+                            tooltip.style.left = '50%';
+                            tooltip.style.transform = 'translateX(-50%)';
+                            tooltip.style.backgroundColor = 'rgba(0,0,0,0.8)';
+                            tooltip.style.color = 'white';
+                            tooltip.style.padding = '4px 8px';
+                            tooltip.style.borderRadius = '4px';
+                            tooltip.style.fontSize = '12px';
+                            tooltip.style.opacity = '0';
+                            tooltip.style.transition = 'opacity 0.2s';
+                            tooltip.style.marginBottom = '5px';
+                            tooltip.style.whiteSpace = 'nowrap';
+                            
+                            bar.addEventListener('mouseenter', () => {
+                                tooltip.style.opacity = '1';
+                            });
+                            bar.addEventListener('mouseleave', () => {
+                                tooltip.style.opacity = '0';
+                            });
+                            
+                            bar.appendChild(tooltip);
+                            barWrapper.appendChild(bar);
+                            barsContainer.appendChild(barWrapper);
+                        });
+                        
+                        chartContainer.appendChild(barsContainer);
+                        
+                        // Create legend
+                        data.forEach(item => {
+                            const legendItem = document.createElement('div');
+                            legendItem.style.display = 'inline-flex';
+                            legendItem.style.alignItems = 'center';
+                            legendItem.style.margin = '0 10px';
+                            
+                            const colorBox = document.createElement('span');
+                            colorBox.style.backgroundColor = item.color;
+                            colorBox.style.width = '12px';
+                            colorBox.style.height = '12px';
+                            colorBox.style.borderRadius = '2px';
+                            colorBox.style.marginRight = '5px';
+                            colorBox.style.display = 'inline-block';
+                            
+                            const label = document.createElement('span');
+                            label.textContent = `${item.label} (${item.percentage}%)`;
+                            
+                            legendItem.appendChild(colorBox);
+                            legendItem.appendChild(label);
+                            legendContainer.appendChild(legendItem);
+                        });
+                    }
+
+                    document.addEventListener('DOMContentLoaded', loadDeliveryStatus);
+                </script>
+                
+                
+            </div>
+        </main>
+
+        <!---------------------- RIGHT SIDEBAR ---------------------->
+        <div class="right">
+            <div class="top">
+                <button id="menu-btn">
+                    <span class="material-symbols-outlined">menu</span>
+                </button>
+                <div class="theme-toggler">
+                    <span class="material-symbols-outlined active" id="light">light_mode</span>
+                    <span class="material-symbols-outlined">dark_mode</span>
+                </div>
+                <div class="profile">
+                    <div class="info">
+                        <!-- <p>Hey, <b>Daniel</b></p>
+                        <small class="text-muted">Admin</small> -->
+                        <p>Hey,</p>
+                        <b style="text-align: center;">Admin</b>
+                    </div>
+                    <div class="profile-photo">
+                        <img src="./images/admin.webp" alt="Profile Photo" class="pic">
+                    </div>
+                </div>
+            </div>
+
+            <div class="recent-messages">
+                <h3>Quick Actions</h3>
+                <div class="action-item" id="addUserBtn">
+                    <span class="material-symbols-outlined">add</span>
+                    <span>Add New User</span>
+                </div>
+                <div class="action-item" id="addTemplateBtn">
+                    <span class="material-symbols-outlined">description</span>
+                    <span>Add Notification Template</span>
+                </div>
+                <a class="action-item" href="delivery.html">
+                    <span class="material-symbols-outlined">schedule</span>
+                    <span>View Delivery</span>
+                </a>
+            </div>
+        </div>
+
+        <!------------------------ Add User ------------------------>
+        <div id="userModal" class="um-modal">
+            <div class="um-modal-content">
+              <h2 id="modalTitle">Add User</h2>
+              <form id="userForm">
+                <label>Full Name</label>
+                <input type="text" id="fullname" required />
+                
+                <label>Email</label>
+                <input type="email" id="email" required />
+                
+                <label>Phone Number</label>
+                <input type="text" id="phone_number" />
+                
+                <label>Role</label>
+                <select id="role" required>
+                  <option value="">Select Role</option>
+                  <option value="Product Manager">Product Manager</option>
+                  <option value="Operations Manager">Operations Manager</option>
+                  <!-- Add other roles as needed -->
+                </select>
+                
+                <label>Permissions</label>
+                <div class="permissions-group">
+                  <label class="perm-pill">
+                    <input type="checkbox" value="View Logs" />
+                    View Logs
+                  </label>
+                  <label class="perm-pill">
+                    <input type="checkbox" value="Manage Account" />
+                    Manage Account
+                  </label>
+                </div>
+                
+                <input type="hidden" id="userId" />
+                <button type="submit" class="btn-primary full" style="background: #266824;">Save</button>
+                <button type="button" class="btn-secondary full" onclick="closeModal()" style="background: #e74c3c;">Cancel</button>
+              </form>
+            </div>
+        </div>
+        
+        <div id="toast" class="toast">Action completed</div>
+
+        <!------------ Add Notification Template ------------>
+        <div id="templateModal" class="um-modal">
+            <div class="um-modal-content">
+            <h2 id="templateModalTitle">Add Notification Template</h2>
+            <form id="templateForm">
+                <label>Template Name</label>
+                <input type="text" id="template-name-input" placeholder="e.g. Pickup Reminder" required />
+                
+                <label>Content</label>
+                <textarea id="template-content-input" placeholder="Template Content..." required></textarea>
+                
+                <button type="submit" class="btn-primary full" style="background: #266824;">Save Template</button>
+                <button type="button" class="btn-secondary full" onclick="closeTemplateModal()" style="background: #e74c3c;">Cancel</button>
+            </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="./dashboard.js"></script>
+    <script type="module" src="./user_management.js"></script>
+    <script type="module">
+        import { db } from './firebase-config.js';
+        import { addDoc, collection } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+      
+        // Initialize template modal
+        document.addEventListener('DOMContentLoaded', function() {
+          const addTemplateBtn = document.getElementById("addTemplateBtn");
+          if (addTemplateBtn) {
+            addTemplateBtn.addEventListener("click", openTemplateModal);
+          }
+      
+          const templateForm = document.getElementById("templateForm");
+          if (templateForm) {
+            templateForm.addEventListener("submit", handleTemplateSubmit);
+          }
+        });
+      
+        function openTemplateModal() {
+          document.getElementById("templateModalTitle").textContent = "Add Notification Template";
+          document.getElementById("templateModal").style.display = "block";
+          document.getElementById("templateForm").reset();
+        }
+      
+        function closeTemplateModal() {
+          document.getElementById("templateModal").style.display = "none";
+        }
+      
+        async function handleTemplateSubmit(e) {
+          e.preventDefault();
+          
+          try {
+            const name = document.getElementById("template-name-input").value.trim();
+            const content = document.getElementById("template-content-input").value.trim();
+      
+            if (!name || !content) {
+              alert("Please fill all fields");
+              return;
+            }
+      
+            await addDoc(collection(db, "templates"), {
+              name,
+              content,
+              createdAt: new Date()
+            });
+      
+            showToast("Template added successfully!");
+            closeTemplateModal();
+          } catch (error) {
+            console.error("Error saving template:", error);
+            showToast("Error saving template", true);
+          }
+        }
+      
+        window.closeTemplateModal = closeTemplateModal;
+
+        function showToast(message, isError = false) {
+            const toast = document.getElementById("toast");
+            if (toast) {
+                toast.textContent = message;
+                toast.style.backgroundColor = isError ? "#e53e3e" : "#38a169";
+                toast.style.display = "block";
+                
+                setTimeout(() => {
+                toast.style.display = "none";
+                }, 3000);
+            }
+        }
+    </script>
+
+      
+
+</body>
+</html>

@@ -1,0 +1,119 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Support</title>
+
+    <!-- Material Cdn-->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style> body { font-family: 'Inter', sans-serif; } </style>
+
+    <!-- Stylesheet-->
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="chat_suupport.css">
+
+</head>
+<body>
+     <div class="container">
+    <!-- Sidebar -->
+    <aside>
+      <div class="top">
+        <div class="logo">
+          <img src="./images/logo.JPG" alt="">
+          <h2>PO<span class="dGreen">YO</span></h2>
+        </div>
+        <div class="close" id="close-btn">
+          <span class="material-symbols-outlined">close</span>
+        </div>
+      </div>
+      <div class="sidebar">
+        <a href="index.html" id="dashboard">
+          <span class="material-symbols-outlined">dashboard</span>
+          <h3>Dashboard</h3>
+        </a>
+        <a href="user_management.html">
+          <span class="material-symbols-outlined">manage_accounts</span>
+          <h3>User Management</h3>
+        </a>
+        <a href="feedback.html">
+          <span class="material-symbols-outlined">feedback</span>
+          <h3>Feedback</h3>
+        </a>
+        <a href="chat_support.html" id="feedback-support" class="active">
+          <span class="material-symbols-outlined">support_agent</span>
+          <h3>Customer Support</h3>
+        </a>
+        <a href="notify.html" class="" id="messages">
+          <span class="material-symbols-outlined">notifications</span>
+          <h3>Notifications</h3>
+        </a>
+        <a href="delivery.html" class="" id="settings">
+            <span class="material-symbols-outlined">local_shipping</span>
+            <h3>Delivery</h3>
+        </a>
+        <a href="#" id="logout">
+          <span class="material-symbols-outlined">logout</span>
+          <h3>Logout</h3>
+        </a>
+      </div>
+    </aside>
+
+        <!---------------------- END OF ASIDE ---------------------->
+   <main class="chat-support">
+    <nav class="breadcrumb">
+    <a href="index.html">Home</a> /
+    <span>Customer Support</span>
+    </nav>
+
+    <div class="chat-container">
+      <!-- Chat Sidebar -->
+      <div class="chat-sidebar">
+        <h3>Users</h3>
+        <input type="text" placeholder="Search users..." id="searchUsers" />
+        <ul id="chatList"></ul>
+      </div>
+
+      <!-- Chat Window -->
+      <div class="chat-window">
+        <div class="chat-header" id="chatHeader">Select a conversation</div>
+        <div class="chat-messages" id="chatMessages"></div>
+
+        <div class="chat-input">
+          <input type="text" id="chatInput" placeholder="Type your message..." />
+          <button id="sendBtn"><span class="material-symbols-outlined">send</span></button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+        <!---------------------- END OF MAIN ---------------------->
+     <div class="right">
+      <div class="top">
+        <button id="menu-btn">
+          <span class="material-symbols-outlined">menu</span>
+        </button>
+        <div class="theme-toggler">
+          <span class="material-symbols-outlined active">light_mode</span>
+          <span class="material-symbols-outlined">dark_mode</span>
+        </div>
+        <div class="profile">
+          <div class="info">
+            <p>Hey,</p>
+            <b style="text-align: center;">Admin</b>
+          </div>
+          <div class="profile-photo">
+            <img src="./images/admin.webp" alt="" class="pic"/>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+    <script src="./index.js"></script>
+
+      <!-- Firebase SDKs -->
+    <script type="module" src="firebase.js"></script>
+    <script type="module" src="chat_support.js"></script>
+
+</body>
+</html>
